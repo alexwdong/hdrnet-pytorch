@@ -1,43 +1,42 @@
 import os
 from PIL import Image
-
+from os import listdir
+from os.path import isfile, join
 import torch
 from torchvision import transforms
 from torch.utils.data import Dataset
 
 class HDRDataset(Dataset):
-    def __init__(self, image_path, params=None, suffix=''):
-        self.image_path = image_path
-        self.suffix = suffix
-        self.in_files = self.list_files(os.path.join(image_path, 'input'+suffix))
-        ls = params['net_input_size']
-        fs = params['net_output_size']
-        self.low = transforms.Compose([
-            transforms.Resize((ls,ls), Image.BICUBIC),
+    def __init__(self, input_path,target_path, full_size=2048,reduced_size=256):
+        self.input_path = input_path
+        self.target_path = target_path
+        # Make list of in_files and out_files
+        self.file_names = [ f for f in listdir(input_path) if os.path.isfile(os.path.join(input_path, f))]
+        self.input_files = [os.path.join(self.input_path,f) for f in self.file_names]
+        self.target_files = [os.path.join(self.target_path,f) for f in self.file_names]
+        
+        self.full_size = full_size
+        self.reduced_size = reduced_size
+        
+        self.reduced_transforms = transforms.Compose([
+            transforms.Resize((self.reduced_size,self.reduced_size), Image.BICUBIC),
             transforms.ToTensor()
         ])
-        self.full = transforms.Compose([
-            transforms.Resize((fs,fs), Image.BICUBIC),
+        
+        self.full_transforms = transforms.Compose([
+            transforms.Resize((self.full_size,self.full_size), Image.BICUBIC),
             transforms.ToTensor()
         ])
 
     def __len__(self):
-        return len(self.in_files)
+        return len(self.file_names)
 
     def __getitem__(self, idx):
-        fname = os.path.split(self.in_files[idx])[-1]
-        imagein = Image.open(self.in_files[idx]).convert('RGB')
-        imageout = Image.open(os.path.join(self.image_path, 'output'+self.suffix, fname)).convert('RGB')
-        imagein_low = self.low(imagein)
-        imagein_full = self.full(imagein)
-        imageout = self.full(imageout)
+        input_image = Image.open(self.input_files[idx]).convert('RGB')
+        output_image = Image.open(self.target_files[idx]).convert('RGB')
+        
+        input_image_reduced = self.reduced_transforms(input_image)
+        input_image_full= self.full_transforms(input_image)
+        output_image_full = self.full_transforms(output_image)
 
-        return imagein_low,imagein_full,imageout
-
-    def list_files(self, in_path):
-        files = []
-        for (dirpath, dirnames, filenames) in os.walk(in_path):
-            files.extend(filenames)
-            break
-        files = sorted([os.path.join(in_path, x) for x in files])
-        return files
+        return input_image_reduced, input_image_full, output_image_full

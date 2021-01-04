@@ -3,13 +3,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from collections import OrderedDict
-
+import pytorch_lightning as pl
 #---------------------------------------------------------------------------------------------
 # Start: Define Generic Layers
 #---------------------------------------------------------------------------------------------
 
 class ConvBlock(nn.Module):
-    def __init__(self, inc , outc, kernel_size, padding=None, stride=None, use_bias=True, activation=nn.ReLU, batch_norm=False):
+    def __init__(self, inc , outc, kernel_size, padding=0, stride=1, use_bias=True, activation=nn.ReLU, batch_norm=False):
         super(ConvBlock, self).__init__()
         self.conv = nn.Conv2d(int(inc), int(outc), kernel_size, padding=padding, stride=stride, bias=use_bias)
         self.activation = activation() if activation else None
@@ -25,7 +25,7 @@ class ConvBlock(nn.Module):
 
 class FcBlock(nn.Module):
     def __init__(self, inc , outc, activation=nn.ReLU, batch_norm=False):
-        super(FC, self).__init__()
+        super(FcBlock, self).__init__()
         self.fc = nn.Linear(int(inc), int(outc), bias=(not batch_norm))
         self.activation = activation() if activation else None
         self.bn = nn.BatchNorm1d(outc) if batch_norm else None
@@ -57,7 +57,7 @@ class LowLevelFeatures(nn.Module):
     Current expects input to be of size 256x256
     '''
     
-    def __init__(self,)
+    def __init__(self,):
         super(LowLevelFeatures, self).__init__()
         self.conv1 = ConvBlock(inc=3, outc=16, kernel_size=3, padding=1, stride=2, batch_norm=True)
         self.conv2 = ConvBlock(inc=16, outc=32, kernel_size=3, padding=1, stride=1, batch_norm=True)
@@ -83,7 +83,7 @@ class LocalFeatures(nn.Module):
         self.conv1 = ConvBlock(inc=128, outc=128, kernel_size=3, padding=1, stride=1, batch_norm=True)
         self.conv2 = ConvBlock(inc=128, outc=64, kernel_size=3, padding=1, stride=1, batch_norm=True)
 
-    def forward(self,x)
+    def forward(self,x):
         x = self.conv1(x) 
         x = self.conv2(x) 
         return x
@@ -97,8 +97,9 @@ class GlobalFeatures(nn.Module):
         self.view = View((-1,128*8*8))
         self.fc1 = FcBlock(inc=128*8*8,outc=128)
         self.fc2 = FcBlock(inc=128,outc=64)
-        self.fc3 = FcBlock(inc=32,outc=32)
-    def forward(self,x)
+        self.fc3 = FcBlock(inc=64,outc=32)
+        
+    def forward(self,x):
         x = self.conv1(x) # 32 -> 16
         x = self.conv2(x) 
         x = self.conv3(x) # 16 -> 8
@@ -120,14 +121,14 @@ class FusionLayer(nn.Module):
         # Then copy it height*width times to get bsize x n_feat x height x width
         # Then concatentate it to local input to get bsize x (channel+n_feat) x height x width
         
-        local_height = local_input.shape[3]
-        local_width = local_input.shape[4]
+        local_height = local_input.shape[2]
+        local_width = local_input.shape[3]
         
         
         global_input = torch.unsqueeze(global_input,2)
         global_input = torch.unsqueeze(global_input,3)
         
-        global_input = torch.expand(-1,-1,local_height,local_width)
+        global_input = global_input.expand(-1,-1,local_height,local_width)
         fused_output = torch.cat((local_input,global_input),1) 
         return fused_output
     
@@ -155,7 +156,7 @@ class GuidanceLayer(nn.Module):
         x = self.conv2(x)
         return x
 
-class SlicingLayer(nn.module)
+class SlicingLayer(nn.Module):
     def __init__(self,):
         super(SlicingLayer, self).__init__()
         
@@ -195,6 +196,7 @@ class SlicingLayer(nn.module)
         gmap_x = gmap_x.unsqueeze(3) # Should be of shape (b_size, gmap_height,gmap_width,1)
         gmap_z = guidance_map.permute(0,2,3,1).contiguous() # Go from (bsize,guided_val,gmap_height,gmap_width) to (bsize,gmap_height,gmap_width,guided_val)
         guidemap_guide = torch.cat([gmap_x, gmap_y, gmap_z ], dim=3).unsqueeze(1) # Make sure to concatenate in x,y,guided_val order.
+        print(bilateral_grid.shape,guidemap_guide.shape)
         coeff = F.grid_sample(bilateral_grid, guidemap_guide, 'bilinear', align_corners=True)
         print('coeff size:',coeff.shape)
         return coeff.squeeze(2)
@@ -222,38 +224,63 @@ class ApplyCoeffs(nn.Module):
         return torch.cat([R_out, G_out, B_out], dim=1)
     
         
+#---------------------------------------------------------------------------------------------
+# Start: Define HDRNet
+#---------------------------------------------------------------------------------------------
 
 
-class HDRPointwiseNN(nn.Module):
+class HDRPointwiseNN(pl.LightningModule):
 
     def __init__(self):
         super(HDRPointwiseNN, self).__init__()
         self.low_level = LowLevelFeatures()
-        self.local = LocalFeatures()
-        self.global = GlobalFeatures()
-        self.fusion=FusionLayer()
+        self.local_features = LocalFeatures()
+        self.global_features = GlobalFeatures()
+        self.fusion_layer = FusionLayer()
         self.pwc_mixing = PointwiseChannelMixingLayer()
-        self.guidance=GuidanceLayer()
-        self.slicing=SlicingLayer()
+        
+        
+        self.reshape = View((-1,12,8,32,32))
+        self.guidance_layer = GuidanceLayer()
+        self.slicing_layer = SlicingLayer()
         self.apply_coeffs = ApplyCoeffs()
 
     def forward(self, lowres, fullres):
         low_level_output = self.low_level(lowres)
-        local_output = self.local(low_level_output)
-        global_output = self.global(low_level_output)
-        fusion_output = self.fusion(local_output,global_output)
+        local_output = self.local_features(low_level_output)
+        global_output = self.global_features(low_level_output)
+        fusion_output = self.fusion_layer(local_output,global_output)
         pwc_mix_output = self.pwc_mixing(fusion_output)
+        bilateral_grid_output = self.reshape(pwc_mix_output)
         
-        guidance_output = self.guidance(fullres)
+        guidance_output = self.guidance_layer(fullres)
         
-        slice_coeffs = self.slice(pwc_mix_output, guidance_output)
+        slice_coeffs = self.slicing_layer(bilateral_grid_output, guidance_output)
         out = self.apply_coeffs(slice_coeffs, fullres)
         return out
+    
+    def training_step(self, batch, batch_idx):
         
+        input_reduced, input_full, target_full = batch
+        ### Start HDRnet Model
+        low_level_output = self.low_level(input_reduced)
+        local_output = self.local_features(low_level_output)
+        global_output = self.global_features(low_level_output)
+        fusion_output = self.fusion_layer(local_output,global_output)
+        pwc_mix_output = self.pwc_mixing(fusion_output)
+        bilateral_grid_output = self.reshape(pwc_mix_output)
         
+        guidance_output = self.guidance_layer(input_full)
         
-        
-        
-        
-        
+        slice_coeffs = self.slicing_layer(bilateral_grid_output, guidance_output)
+        pred = self.apply_coeffs(slice_coeffs, input_full)
+        ### End HDRnet Model
+        loss = F.mse_loss(pred, target_full)
+        self.log('train_loss', loss)
+        return loss
+
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        return optimizer
+  
         
