@@ -64,24 +64,24 @@ class LowLevelFeatures(nn.Module):
         self.conv3 = ConvBlock(inc=32, outc=32, kernel_size=3, padding=1, stride=2, batch_norm=True)
         self.conv4 = ConvBlock(inc=32, outc=64, kernel_size=3, padding=1, stride=1, batch_norm=True)
         self.conv5 = ConvBlock(inc=64, outc=64, kernel_size=3, padding=1, stride=2, batch_norm=True)
-        self.conv6 = ConvBlock(inc=64, outc=128, kernel_size=3, padding=1, stride=1, batch_norm=True)
+        self.conv6 = ConvBlock(inc=64, outc=64, kernel_size=3, padding=1, stride=1, batch_norm=True)
         
     def forward(self,x):
         if x.shape[-1] != 256 or x.shape[-2]!= 256:
             raise ValueError('input image here needs to be 3x256x256 (channel x height x width )')
-        x = self.conv1(x) # 256 -> 128
+        x = self.conv1(x) # 256pix -> 128pix
         x = self.conv2(x) 
-        x = self.conv3(x) # 128 -> 64
+        x = self.conv3(x) # 128pix -> 64pix
         x = self.conv4(x)
-        x = self.conv5(x) # 64 -> 32
+        x = self.conv5(x) # 64pix -> 32pix
         x = self.conv6(x)
         return x
 
 class LocalFeatures(nn.Module):
     def __init__(self,):
         super(LocalFeatures, self).__init__()
-        self.conv1 = ConvBlock(inc=128, outc=128, kernel_size=3, padding=1, stride=1, batch_norm=True)
-        self.conv2 = ConvBlock(inc=128, outc=64, kernel_size=3, padding=1, stride=1, batch_norm=True)
+        self.conv1 = ConvBlock(inc=64, outc=64, kernel_size=3, padding=1, stride=1, batch_norm=True)
+        self.conv2 = ConvBlock(inc=64, outc=64, kernel_size=3, padding=1, stride=1, batch_norm=True)
 
     def forward(self,x):
         x = self.conv1(x) 
@@ -90,12 +90,12 @@ class LocalFeatures(nn.Module):
 class GlobalFeatures(nn.Module):
     def __init__(self,):
         super(GlobalFeatures, self).__init__()
-        self.conv1 = ConvBlock(inc=128, outc=128, kernel_size=3, padding=1, stride=2, batch_norm=True)
-        self.conv2 = ConvBlock(inc=128, outc=128, kernel_size=3, padding=1, stride=1, batch_norm=True)
-        self.conv3 = ConvBlock(inc=128, outc=128, kernel_size=3, padding=1, stride=2, batch_norm=True)
-        self.conv4 = ConvBlock(inc=128, outc=128, kernel_size=3, padding=1, stride=1, batch_norm=True)
-        self.view = View((-1,128*8*8))
-        self.fc1 = FcBlock(inc=128*8*8,outc=128)
+        self.conv1 = ConvBlock(inc=64, outc=32, kernel_size=3, padding=1, stride=2, batch_norm=True)
+        self.conv2 = ConvBlock(inc=32, outc=32, kernel_size=3, padding=1, stride=1, batch_norm=True)
+        self.conv3 = ConvBlock(inc=32, outc=32, kernel_size=3, padding=1, stride=2, batch_norm=True)
+        self.conv4 = ConvBlock(inc=32, outc=32, kernel_size=3, padding=1, stride=1, batch_norm=True)
+        self.view = View((-1,32*8*8))
+        self.fc1 = FcBlock(inc=32*8*8,outc=128)
         self.fc2 = FcBlock(inc=128,outc=64)
         self.fc3 = FcBlock(inc=64,outc=32)
         
@@ -196,9 +196,9 @@ class SlicingLayer(nn.Module):
         gmap_x = gmap_x.unsqueeze(3) # Should be of shape (b_size, gmap_height,gmap_width,1)
         gmap_z = guidance_map.permute(0,2,3,1).contiguous() # Go from (bsize,guided_val,gmap_height,gmap_width) to (bsize,gmap_height,gmap_width,guided_val)
         guidemap_guide = torch.cat([gmap_x, gmap_y, gmap_z ], dim=3).unsqueeze(1) # Make sure to concatenate in x,y,guided_val order.
-        print(bilateral_grid.shape,guidemap_guide.shape)
+        #print(bilateral_grid.shape,guidemap_guide.shape)
         coeff = F.grid_sample(bilateral_grid, guidemap_guide, 'bilinear', align_corners=True)
-        print('coeff size:',coeff.shape)
+        #print('coeff size:',coeff.shape)
         return coeff.squeeze(2)
 
     
@@ -283,4 +283,21 @@ class HDRPointwiseNN(pl.LightningModule):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
         return optimizer
   
-        
+    def validation_step(self, batch, batch_idx):
+        input_reduced, input_full, target_full = batch
+        ### Start HDRnet Model
+        low_level_output = self.low_level(input_reduced)
+        local_output = self.local_features(low_level_output)
+        global_output = self.global_features(low_level_output)
+        fusion_output = self.fusion_layer(local_output,global_output)
+        pwc_mix_output = self.pwc_mixing(fusion_output)
+        bilateral_grid_output = self.reshape(pwc_mix_output)
+
+        guidance_output = self.guidance_layer(input_full)
+
+        slice_coeffs = self.slicing_layer(bilateral_grid_output, guidance_output)
+        pred = self.apply_coeffs(slice_coeffs, input_full)
+        ### End HDRnet Model
+        loss = F.mse_loss(pred, target_full)
+        self.log('val_loss', loss)
+        return loss
