@@ -40,5 +40,7 @@ if __name__ == '__main__':
         try:
             input_image_reduced = reduce_transform(input_image_full)
             input_image_reduced.save(output_file, "JPEG")
+            print('saved to output file: ' + output_file) 
         except:
             print('file: ' + input_file + ' could not be resized (one dimension was too small most likely)')
+    
