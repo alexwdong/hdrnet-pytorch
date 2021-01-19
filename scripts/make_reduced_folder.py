@@ -25,7 +25,7 @@ if __name__ == '__main__':
     
     # Reduce size to (reduced_pix_size, reduced_pix_size)    
     reduce_transform = transforms.Compose([
-        transforms.Resize((reduced_pixel_size,reduced_pixel_size), Image.BICUBIC),
+        transforms.Resize((reduced_pixel_size,reduced_pixel_size), Image.BILINEAR),
     ])
     #Make output dir
     if not os.path.exists(output_path):
@@ -37,5 +37,8 @@ if __name__ == '__main__':
         output_file = output_files[ii]
         # Open, reduce, save
         input_image_full = Image.open(input_file)
-        input_image_reduced = reduce_transform(input_image_full)
-        input_image_reduced.save(output_file, "JPEG")
+        try:
+            input_image_reduced = reduce_transform(input_image_full)
+            input_image_reduced.save(output_file, "JPEG")
+        except:
+            print('file: ' + input_file + ' could not be resized (one dimension was too small most likely)')
