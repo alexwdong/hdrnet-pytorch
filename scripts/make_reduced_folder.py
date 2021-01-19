@@ -29,7 +29,7 @@ if __name__ == '__main__':
     ])
     #Make output dir
     if not os.path.exists(output_path):
-        os.mkdir(output_path)
+        os.mkdirs(output_path)
     # Reduce each image
     for ii in range(len(input_files)):
         #Get names
