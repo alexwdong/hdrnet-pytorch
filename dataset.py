@@ -39,7 +39,7 @@ class HDRDataset(Dataset):
         ])
 
     def __len__(self):
-        return len(self.file_names)
+        return len(self.input_files)
 
     def __getitem__(self, idx):
         input_image = Image.open(self.input_files[idx]).convert('RGB')
