@@ -15,12 +15,12 @@ from mpl_toolkits.axes_grid1 import ImageGrid
 
 logging_path = '/home/awd275/hdrnet-pytorch/fivek_logs/'
 
-orig_photos_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/fivek_original'
-editor_A_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/fivek_editor_A'
-editor_B_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/fivek_editor_B'
-editor_C_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/fivek_editor_C'
-editor_D_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/fivek_editor_D'
-editor_E_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/fivek_editor_E'
+orig_photos_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_original'
+editor_A_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_A'
+editor_B_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_B'
+editor_C_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_C'
+editor_D_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_D'
+editor_E_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_E'
 
 dataset_A = HDRDataset(orig_photos_path,editor_A_path)
 dataset_B = HDRDataset(orig_photos_path,editor_B_path)
@@ -37,8 +37,8 @@ train_length = math.ceil(.8 *dataset_length)
 val_length = dataset_length-train_length
 train_set, val_set = random_split(dataset, [train_length, val_length], generator=torch.Generator().manual_seed(42))
 
-train_loader = DataLoader(train_set, batch_size = 64)
-val_loader =  DataLoader(val_set, batch_size = 64)
+train_loader = DataLoader(train_set, batch_size = 16, num_workers=24)
+val_loader =  DataLoader(val_set, batch_size = 16, num_workers=24)
 
 print(dataset_length)
 print(train_length)
@@ -47,10 +47,10 @@ print(val_length)
 hdrnet = HDRPointwiseNN()
 
 trainer = pl.Trainer(gpus=1,
-                     max_epochs=500,
+                     max_epochs=50,
                      val_check_interval=.5,
                      terminate_on_nan=True,
-                     default_save_path=logging_path)
+                     default_root_dir=logging_path)
 trainer.fit(hdrnet, train_dataloader = train_loader, val_dataloaders = val_loader)
 
 
