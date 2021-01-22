@@ -6,14 +6,24 @@ import torch
 from torchvision import transforms
 from torch.utils.data import Dataset
 
+
+
+skiplist = ['a1233-DSC_0064.jpg',
+            'a1234-DGW6333.jpg'
+           ]
 class HDRDataset(Dataset):
     def __init__(self, input_path,target_path, full_size=2048,reduced_size=256):
         self.input_path = input_path
         self.target_path = target_path
         # Make list of in_files and out_files
         self.file_names = [ f for f in listdir(input_path) if os.path.isfile(os.path.join(input_path, f))]
-        self.input_files = [os.path.join(self.input_path,f) for f in self.file_names]
-        self.target_files = [os.path.join(self.target_path,f) for f in self.file_names]
+        self.input_files=[]
+        self.target_files=[]
+        for f in self.file_names:
+            if f not in skiplist:
+                self.input_files.append(os.path.join(self.input_path,f))
+                self.target_files.append(os.path.join(self.target_path,f))
+        
         
         self.full_size = full_size
         self.reduced_size = reduced_size
