@@ -9,7 +9,7 @@ from torch.utils.data import Dataset
 
 
 skiplist = ['a1233-DSC_0064.jpg',
-            'a1234-DGW6333.jpg'
+            'a1234-_DGW6333.jpg'
            ]
 class HDRDataset(Dataset):
     def __init__(self, input_path,target_path, full_size=2048,reduced_size=256):

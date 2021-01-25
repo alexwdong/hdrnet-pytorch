@@ -37,8 +37,8 @@ train_length = math.ceil(.8 *dataset_length)
 val_length = dataset_length-train_length
 train_set, val_set = random_split(dataset, [train_length, val_length], generator=torch.Generator().manual_seed(42))
 
-train_loader = DataLoader(train_set, batch_size = 16, num_workers=24)
-val_loader =  DataLoader(val_set, batch_size = 16, num_workers=24)
+train_loader = DataLoader(train_set, batch_size = 4, num_workers=24)
+val_loader =  DataLoader(val_set, batch_size = 4, num_workers=24)
 
 print(dataset_length)
 print(train_length)
