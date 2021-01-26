@@ -33,7 +33,7 @@ class HDRDataset(Dataset):
                 output_image = Image.open(self.target_files[idx]).convert('RGB')
             except Exception:
                 skiplist.append(f)
-        print("skiplist is:")
+        print("skiplist is of length:", str(len(skiplist)))
         print(skiplist)
         for f in self.file_names:
                 
