@@ -27,21 +27,18 @@ class HDRDataset(Dataset):
         skiplist = []
         for f in self.file_names:
             try:
+                #Try opening the files, if they work, then we append to the input_files and target_files lists
                 input_image_path = os.path.join(self.input_path, f)
                 output_image_path = os.path.join(self.target_path, f)
-                input_image = Image.open(self.input_files[idx]).convert('RGB')
-                output_image = Image.open(self.target_files[idx]).convert('RGB')
-            except Exception:
-                skiplist.append(f)
-        print("skiplist is of length:", str(len(skiplist)))
-        print(skiplist)
-        for f in self.file_names:
-                
-            if f not in skiplist:
+                input_image = Image.open(input_image_path).convert('RGB')
+                output_image = Image.open(output_image_path).convert('RGB')
                 
                 self.input_files.append(os.path.join(self.input_path,f))
                 self.target_files.append(os.path.join(self.target_path,f))
-        
+            except Exception: #If they don't work, append to skiplist, and print skiplist
+                skiplist.append(f)
+        print("skiplist is of length:", str(len(skiplist)))
+        print(skiplist)
         
         self.full_size = full_size
         self.reduced_size = reduced_size
