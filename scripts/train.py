@@ -3,7 +3,7 @@ from dataset import HDRDataset
 import os
 from PIL import Image
 import math
-
+import argparse
 import torch
 from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader,random_split,ConcatDataset
@@ -23,10 +23,10 @@ parser.add_argument('-b', '--batch_size',help='batch_size, default=16', default=
 args = vars(parser.parse_args())
 
 logging_path = args['logging_path']
-mode = args['mode']
-num_gpus = args['gpus']
+mode = int(args['mode'])
+num_gpus = int(args['gpus'])
 checkpoint_path = args['checkpoint_path']
-batch_size=args['batch_size']
+batch_size=int(args['batch_size'])
 
 if __name__ == '__main__':
 

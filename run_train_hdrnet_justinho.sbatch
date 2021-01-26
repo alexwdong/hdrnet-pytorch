@@ -3,8 +3,8 @@
 #SBATCH --job-name=hdrnet
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=128GB
-#SBATCH --gres=gpu:2
+#SBATCH --mem=64GB
+#SBATCH --gres=gpu:1
 #SBATCH --time=72:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=awd275@nyu.edu
@@ -27,9 +27,9 @@ export PYTHONPATH="./"
 py3=/scratch/awd275/miniconda3/envs/hdrnet/bin/python3
 pyscript=/home/awd275/hdrnet-pytorch/scripts/train.py
 logging_path=/home/awd275/hdrnet-pytorch/jho_logs/
-gpus=2
+gpus=1
 mode=2
-checkpoint_path=/home/awd275/hdrnet-pytorch/checkpoints/default1.chkpt 
+checkpoint_path=/home/awd275/hdrnet-pytorch/checkpoints/default1.ckpt 
 batch_size=8
 $py3 $pyscript -l $logging_path -g $gpus -m $mode -c $checkpoint_path -b $batch_size
 
