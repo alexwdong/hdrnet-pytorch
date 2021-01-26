@@ -23,8 +23,22 @@ class HDRDataset(Dataset):
         self.file_names = [ f for f in listdir(input_path) if os.path.isfile(os.path.join(input_path, f))]
         self.input_files=[]
         self.target_files=[]
+        
+        skiplist = []
         for f in self.file_names:
+            try:
+                input_image_path = os.path.join(self.input_path, f)
+                output_image_path = os.path.join(self.target_path, f)
+                input_image = Image.open(self.input_files[idx]).convert('RGB')
+                output_image = Image.open(self.target_files[idx]).convert('RGB')
+            except Exception:
+                skiplist.append(f)
+        print("skiplist is:")
+        print(skiplist)
+        for f in self.file_names:
+                
             if f not in skiplist:
+                
                 self.input_files.append(os.path.join(self.input_path,f))
                 self.target_files.append(os.path.join(self.target_path,f))
         
