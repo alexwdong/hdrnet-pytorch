@@ -13,6 +13,7 @@ skiplist = [ #fivek skip list
     'a1234-_DGW6333.jpg',
     #jho skip list
     'JH2_5161.jpg',
+    'JH2_5182.jpg'
            ]
 class HDRDataset(Dataset):
     def __init__(self, input_path,target_path, full_size=2048,reduced_size=256):
