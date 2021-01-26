@@ -26,8 +26,12 @@ export PYTHONPATH="./"
 # Execute the script
 py3=/scratch/awd275/miniconda3/envs/hdrnet/bin/python3
 pyscript=/home/awd275/hdrnet-pytorch/scripts/train.py
-
-$py3 $pyscript 
+logging_path=/home/awd275/hdrnet-pytorch/fivek_logs/
+gpus=1
+mode=1
+checkpoint_path=/home/awd275/hdrnet-pytorch/checkpoints/default1.chkpt 
+batch_size=4
+$py3 $pyscript -l $logging_path -g $gpus -m $mode -c $checkpoint_path -b $batch_size
 
 
 
