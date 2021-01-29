@@ -33,19 +33,20 @@ if __name__ == '__main__':
     if mode == 1:
         orig_photos_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_original'
         editor_A_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_A'
-        editor_B_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_B'
-        editor_C_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_C'
-        editor_D_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_D'
-        editor_E_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_E'
+        #editor_B_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_B'
+        #editor_C_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_C'
+        #editor_D_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_D'
+        #editor_E_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_E'
 
         dataset_A = HDRDataset(orig_photos_path,editor_A_path)
-        dataset_B = HDRDataset(orig_photos_path,editor_B_path)
-        dataset_C = HDRDataset(orig_photos_path,editor_C_path)
-        dataset_D = HDRDataset(orig_photos_path,editor_D_path)
-        dataset_E = HDRDataset(orig_photos_path,editor_E_path)
+        #dataset_B = HDRDataset(orig_photos_path,editor_B_path)
+        #dataset_C = HDRDataset(orig_photos_path,editor_C_path)
+        #dataset_D = HDRDataset(orig_photos_path,editor_D_path)
+        #dataset_E = HDRDataset(orig_photos_path,editor_E_path)
 
-
-        dataset = ConcatDataset([dataset_A,dataset_B,dataset_C,dataset_D,dataset_E])
+        
+        #dataset = ConcatDataset([dataset_A,dataset_B,dataset_C,dataset_D,dataset_E])
+	dataset=dataset_A
     elif mode == 2:
         orig_photos_path = '/scratch/awd275/StyleTransfer/data/justinho/small_original/'
         edited_photos_path = '/scratch/awd275/StyleTransfer/data/justinho/small_edited'
