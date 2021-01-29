@@ -130,7 +130,7 @@ class FusionLayer(nn.Module):
 class PointwiseChannelMixingLayer(nn.Module):
     def __init__(self,):
         super(PointwiseChannelMixingLayer, self).__init__()
-        self.conv = ConvBlock(inc=96, outc=96, kernel_size=1, padding=0, stride=1,)
+        self.conv = ConvBlock(inc=128, outc=96, kernel_size=1, padding=0, stride=1,)
         
     def forward(self, x):
         x = self.conv(x)
