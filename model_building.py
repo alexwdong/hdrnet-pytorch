@@ -59,22 +59,21 @@ class LowLevelFeatures(nn.Module):
     
     def __init__(self,):
         super(LowLevelFeatures, self).__init__()
-        self.conv1 = ConvBlock(inc=3, outc=16, kernel_size=3, padding=1, stride=2, batch_norm=True)
-        self.conv2 = ConvBlock(inc=16, outc=32, kernel_size=3, padding=1, stride=1, batch_norm=True)
-        self.conv3 = ConvBlock(inc=32, outc=32, kernel_size=3, padding=1, stride=2, batch_norm=True)
-        self.conv4 = ConvBlock(inc=32, outc=64, kernel_size=3, padding=1, stride=1, batch_norm=True)
-        self.conv5 = ConvBlock(inc=64, outc=64, kernel_size=3, padding=1, stride=2, batch_norm=True)
-        self.conv6 = ConvBlock(inc=64, outc=64, kernel_size=3, padding=1, stride=1, batch_norm=True)
+        self.conv1 = ConvBlock(inc=3, outc=8, kernel_size=3, padding=1, stride=2, batch_norm=True)
+        self.conv2 = ConvBlock(inc=8, outc=16, kernel_size=3, padding=1, stride=2, batch_norm=True)
+        self.conv3 = ConvBlock(inc=16, outc=32, kernel_size=3, padding=1, stride=2, batch_norm=True)
+        self.conv4 = ConvBlock(inc=32, outc=64, kernel_size=3, padding=1, stride=2, batch_norm=True)
+        
+        
         
     def forward(self,x):
         if x.shape[-1] != 256 or x.shape[-2]!= 256:
             raise ValueError('input image here needs to be 3x256x256 (channel x height x width )')
         x = self.conv1(x) # 256pix -> 128pix
-        x = self.conv2(x) 
-        x = self.conv3(x) # 128pix -> 64pix
-        x = self.conv4(x)
-        x = self.conv5(x) # 64pix -> 32pix
-        x = self.conv6(x)
+        x = self.conv2(x) # 128pix -> 64pix
+        x = self.conv3(x) # 64pix -> 32pix
+        x = self.conv4(x) # 32pix -> 16pix
+       
         return x
 
 class LocalFeatures(nn.Module):
@@ -90,20 +89,16 @@ class LocalFeatures(nn.Module):
 class GlobalFeatures(nn.Module):
     def __init__(self,):
         super(GlobalFeatures, self).__init__()
-        self.conv1 = ConvBlock(inc=64, outc=32, kernel_size=3, padding=1, stride=2, batch_norm=True)
-        self.conv2 = ConvBlock(inc=32, outc=32, kernel_size=3, padding=1, stride=1, batch_norm=True)
-        self.conv3 = ConvBlock(inc=32, outc=32, kernel_size=3, padding=1, stride=2, batch_norm=True)
-        self.conv4 = ConvBlock(inc=32, outc=32, kernel_size=3, padding=1, stride=1, batch_norm=True)
-        self.view = View((-1,32*8*8))
-        self.fc1 = FcBlock(inc=32*8*8,outc=128)
-        self.fc2 = FcBlock(inc=128,outc=64)
-        self.fc3 = FcBlock(inc=64,outc=32)
+        self.conv1 = ConvBlock(inc=64, outc=64, kernel_size=3, padding=1, stride=2, batch_norm=True)
+        self.conv2 = ConvBlock(inc=64, outc=64, kernel_size=3, padding=1, stride=2, batch_norm=True)
+        self.view = View((-1,64*4*4))
+        self.fc1 = FcBlock(inc=64*4*4,outc=256)
+        self.fc2 = FcBlock(inc=256,outc=128)
+        self.fc3 = FcBlock(inc=128,outc=64)
         
     def forward(self,x):
-        x = self.conv1(x) # 32 -> 16
-        x = self.conv2(x) 
-        x = self.conv3(x) # 16 -> 8
-        x = self.conv4(x)
+        x = self.conv1(x) # 16 -> 8
+        x = self.conv2(x) #8 -> 4 
         x = self.view(x)
         x = self.fc1(x)
         x = self.fc2(x)
