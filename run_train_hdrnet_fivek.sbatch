@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=64GB
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:rtx8000:1
 #SBATCH --time=72:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=awd275@nyu.edu
@@ -30,7 +30,7 @@ logging_path=/home/awd275/hdrnet-pytorch/fivek_logs/
 gpus=1
 mode=1
 #checkpoint_path=/home/awd275/hdrnet-pytorch/checkpoints/default1.chkpt 
-batch_size=16
+batch_size=8
 $py3 $pyscript -l $logging_path -g $gpus -m $mode -b $batch_size
 
 
