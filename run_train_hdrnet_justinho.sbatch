@@ -29,9 +29,9 @@ pyscript=/home/awd275/hdrnet-pytorch/scripts/train.py
 logging_path=/home/awd275/hdrnet-pytorch/jho_logs/
 gpus=1
 mode=2
-checkpoint_path=/home/awd275/hdrnet-pytorch/checkpoints/default1.ckpt 
+#checkpoint_path=/home/awd275/hdrnet-pytorch/checkpoints/default1.ckpt 
 batch_size=8
-$py3 $pyscript -l $logging_path -g $gpus -m $mode -c $checkpoint_path -b $batch_size
+$py3 $pyscript -l $logging_path -g $gpus -m $mode -b $batch_size
 
 
 

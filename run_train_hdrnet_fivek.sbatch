@@ -29,9 +29,9 @@ pyscript=/home/awd275/hdrnet-pytorch/scripts/train.py
 logging_path=/home/awd275/hdrnet-pytorch/fivek_logs/
 gpus=1
 mode=1
-checkpoint_path=/home/awd275/hdrnet-pytorch/checkpoints/default1.chkpt 
-batch_size=4
-$py3 $pyscript -l $logging_path -g $gpus -m $mode -c $checkpoint_path -b $batch_size
+#checkpoint_path=/home/awd275/hdrnet-pytorch/checkpoints/default1.chkpt 
+batch_size=16
+$py3 $pyscript -l $logging_path -g $gpus -m $mode -b $batch_size
 
 
 
