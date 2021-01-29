@@ -235,7 +235,7 @@ class HDRPointwiseNN(pl.LightningModule):
         self.pwc_mixing = PointwiseChannelMixingLayer()
         
         
-        self.reshape = View((-1,12,8,32,32))
+        self.reshape = View((-1,12,8,16,16))
         self.guidance_layer = GuidanceLayer()
         self.slicing_layer = SlicingLayer()
         self.apply_coeffs = ApplyCoeffs()
@@ -246,9 +246,9 @@ class HDRPointwiseNN(pl.LightningModule):
         global_output = self.global_features(low_level_output)
         fusion_output = self.fusion_layer(local_output,global_output)
         pwc_mix_output = self.pwc_mixing(fusion_output)
+
         bilateral_grid_output = self.reshape(pwc_mix_output)
-        
-        guidance_output = self.guidance_layer(fullres)
+        guidance_output = self.guidance_layer(input_full)
         
         slice_coeffs = self.slicing_layer(bilateral_grid_output, guidance_output)
         out = self.apply_coeffs(slice_coeffs, fullres)
@@ -262,9 +262,9 @@ class HDRPointwiseNN(pl.LightningModule):
         local_output = self.local_features(low_level_output)
         global_output = self.global_features(low_level_output)
         fusion_output = self.fusion_layer(local_output,global_output)
+        
         pwc_mix_output = self.pwc_mixing(fusion_output)
         bilateral_grid_output = self.reshape(pwc_mix_output)
-        
         guidance_output = self.guidance_layer(input_full)
         
         slice_coeffs = self.slicing_layer(bilateral_grid_output, guidance_output)
@@ -287,7 +287,6 @@ class HDRPointwiseNN(pl.LightningModule):
         fusion_output = self.fusion_layer(local_output,global_output)
         pwc_mix_output = self.pwc_mixing(fusion_output)
         bilateral_grid_output = self.reshape(pwc_mix_output)
-
         guidance_output = self.guidance_layer(input_full)
 
         slice_coeffs = self.slicing_layer(bilateral_grid_output, guidance_output)
