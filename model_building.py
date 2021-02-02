@@ -248,7 +248,7 @@ class HDRPointwiseNN(pl.LightningModule):
         pwc_mix_output = self.pwc_mixing(fusion_output)
 
         bilateral_grid_output = self.reshape(pwc_mix_output)
-        guidance_output = self.guidance_layer(input_full)
+        guidance_output = self.guidance_layer(fullres)
         
         slice_coeffs = self.slicing_layer(bilateral_grid_output, guidance_output)
         out = self.apply_coeffs(slice_coeffs, fullres)
