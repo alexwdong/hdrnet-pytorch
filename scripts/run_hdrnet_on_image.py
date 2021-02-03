@@ -59,7 +59,7 @@ if __name__ == '__main__':
     
     
     if pred.shape[0]==1:
-        print('blah', pred[0,:,:,:])
+        print('blah', pred[0,:,:,:].shape)
         im = transforms.ToPILImage()(pred[0,:,:,:]).convert("RGB")
 
         im.save(output_path, "JPEG")
