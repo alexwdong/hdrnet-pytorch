@@ -17,7 +17,7 @@ def plot_one_image(image_path,model_path):
     with open(model_path,'rb') as f:
         checkpoint = torch.load(f, map_location=lambda storage, loc: storage)
     hdrnet.load_state_dict(checkpoint['state_dict'])
-
+    hdrnet.eval()
     reduced_transforms = transforms.Compose([
             transforms.Resize((256,256), Image.BICUBIC),
             transforms.ToTensor(),
@@ -46,7 +46,7 @@ def plot_batch_of_images(dataloader,model_path):
     with open(model_path,'rb') as f:
         checkpoint = torch.load(f, map_location=lambda storage, loc: storage)
     hdrnet.load_state_dict(checkpoint['state_dict'])
-
+    hdrnet.eval()
     reduced_transforms = transforms.Compose([
             transforms.Resize((256,256), Image.BICUBIC),
             transforms.ToTensor(),
