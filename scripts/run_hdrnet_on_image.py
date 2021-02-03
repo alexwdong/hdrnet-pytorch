@@ -65,7 +65,7 @@ if __name__ == '__main__':
         print('blah', pred[0,:,:,:].shape)
         im = transforms.ToPILImage()(pred[0,:,:,:])
         im.save(output_path, 'JPEG')
-        im_orig = transforms.ToPILImage()(pred[0,:,:,:])
+        im_orig = transforms.ToPILImage()(input_image_resized[0,:,:,:])
         im_orig.save(orig_output_path,'JPEG')
         
         
