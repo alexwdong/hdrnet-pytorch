@@ -18,7 +18,7 @@ conda activate hdrnet
 
 cd /home/awd275/hdrnet-pytorch/
 
-export PYTHONPATH="./"
+export PYTHONPATH="src/"
 
 # Execute the script
 py3=python3
@@ -28,7 +28,7 @@ mode=1
 image_path=/home/awd275/hdrnet-pytorch/data/tiny_original/DSC_4329.jpg
 checkpoint_path=/home/awd275/hdrnet-pytorch/fivek_logs/lightning_logs/version_1924577/checkpoints/epoch=25-step=12749.ckpt
 out_size=1024
-$py3 $pyscript -m $mode -i $image_path -c $checkpoint -o $out_size
+$py3 $pyscript -m $mode -i $image_path -c $checkpoint_path -o $out_size
 
 
 
