@@ -28,7 +28,8 @@ if __name__ == '__main__':
     
     #Figure out which mode
     if mode ==1:
-        output_path = 'out_image.jpg'
+        output_path = 'out_image.jpeg'
+        orig_output_path = 'orig_out_image.jpeg'
     else: 
         raise NotImplementedError('mode 2 not implemented yet')
     
@@ -48,22 +49,26 @@ if __name__ == '__main__':
     
     input_image = Image.open(image_path).convert('RGB')
     input_image_reduced = reduced_transforms(input_image).unsqueeze(0)
+    
     input_image_full = full_transforms(input_image).unsqueeze(0)
     pred = hdrnet.forward(input_image_reduced,input_image_full,)
     pred = pred.detach()
     print('pred shape:', pred.shape)
     if out_size is not None:    
         pred = F.interpolate(pred,size=out_size)
+        input_image_resized = F.interpolate(input_image_full,size=out_size)
     else:
         pass
     
     
     if pred.shape[0]==1:
         print('blah', pred[0,:,:,:].shape)
-        im = transforms.ToPILImage()(pred[0,:,:,:]).convert("RGB")
-
-        im.save(output_path, "JPEG")
-
+        im = transforms.ToPILImage()(pred[0,:,:,:]).convert('RGB')
+        im.save(output_path, 'JPEG')
+        im_orig = transforms.ToPILImage()(pred[0,:,:,:]).convert('RGB')
+        im_orig.save(orig_output_path,'JPEG')
+        
+        
     else:
         raise NotImplementedError('you shouldnt have gottent his error')
         
