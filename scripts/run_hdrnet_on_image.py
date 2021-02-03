@@ -63,9 +63,9 @@ if __name__ == '__main__':
     
     if pred.shape[0]==1:
         print('blah', pred[0,:,:,:].shape)
-        im = transforms.ToPILImage()(pred[0,:,:,:]).convert('BGR')
+        im = transforms.ToPILImage()(pred[0,:,:,:])
         im.save(output_path, 'JPEG')
-        im_orig = transforms.ToPILImage()(pred[0,:,:,:]).convert('BGR')
+        im_orig = transforms.ToPILImage()(pred[0,:,:,:])
         im_orig.save(orig_output_path,'JPEG')
         
         
