@@ -7,6 +7,7 @@ import math
 import torch
 from torchvision import transforms
 import torch.nn.functional as F
+import argparse
 
 parser = argparse.ArgumentParser(description='take input path full of images, makes the outputpath with images at reduced size')
 
@@ -17,7 +18,7 @@ parser.add_argument('-o','--out_size',help='size to resize the output files to',
 args = vars(parser.parse_args())
 
 mode = int(args['mode'])
-image_path = int(args['image_path'])
+image_path = args['image_path']
 checkpoint_path = args['checkpoint_path']
 out_size=args['out_size']
 if out_size is not None:
@@ -34,7 +35,7 @@ if __name__ == '__main__':
     
     #Initialize model with checkpoint
     hdrnet = HDRPointwiseNN()
-    with open(model_path,'rb') as f:
+    with open(checkpoint_path,'rb') as f:
         checkpoint = torch.load(f, map_location=lambda storage, loc: storage)
     hdrnet.load_state_dict(checkpoint['state_dict'])
     hdrnet.eval()
@@ -58,7 +59,9 @@ if __name__ == '__main__':
     
     
     if pred.shape[0]==1:
+        print('blah', pred[0,:,:,:])
         im = transforms.ToPILImage()(pred[0,:,:,:]).convert("RGB")
+
         im.save(output_path, "JPEG")
 
     else:
