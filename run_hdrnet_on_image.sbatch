@@ -26,7 +26,7 @@ pyscript=scripts/run_hdrnet_on_image.py
 
 mode=1
 image_path=/home/awd275/hdrnet-pytorch/data/tiny_original/DSC_4329.jpg
-checkpoint_path=/home/awd275/hdrnet-pytorch/fivek_logs/lightning_logs/version_1924577/checkpoints/epoch=25-step=12749.ckpt
+checkpoint_path=/home/awd275/hdrnet-pytorch/checkpoints/justinho_1.ckpt
 out_size=1024
 $py3 $pyscript -m $mode -i $image_path -c $checkpoint_path -o $out_size
 
