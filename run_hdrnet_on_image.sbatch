@@ -27,8 +27,13 @@ pyscript=scripts/run_hdrnet_on_image.py
 mode=1
 image_path=/home/awd275/hdrnet-pytorch/data/tiny_original/DSC_4329.jpg
 checkpoint_path=/home/awd275/hdrnet-pytorch/checkpoints/justinho_1.ckpt
-out_size=1024
-$py3 $pyscript -m $mode -i $image_path -c $checkpoint_path -o $out_size
+
+
+$py3 $pyscript -m $mode -i $image_path -c $checkpoint_path 
+
+#$py3 $pyscript -m $mode -i $image_path -c $checkpoint_path -o $out_size
+
+
 
 
 
