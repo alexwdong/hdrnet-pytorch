@@ -56,16 +56,16 @@ if __name__ == '__main__':
     print('pred shape:', pred.shape)
     if out_size is not None:    
         pred = F.interpolate(pred,size=out_size)
-        input_image_resized = F.interpolate(input_image_full,size=out_size)
+        input_image_out = F.interpolate(input_image_full,size=out_size)
     else:
-        pass
+        input_image_out = input_image_full
     
     
     if pred.shape[0]==1:
         print('blah', pred[0,:,:,:].shape)
         im = transforms.ToPILImage()(pred[0,:,:,:])
         im.save(output_path, 'JPEG')
-        im_orig = transforms.ToPILImage()(input_image_resized[0,:,:,:])
+        im_orig = transforms.ToPILImage()(input_image_out[0,:,:,:])
         im_orig.save(orig_output_path,'JPEG')
         
         
