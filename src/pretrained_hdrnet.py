@@ -3,6 +3,8 @@ import torchvision
 import inspect
 from torch import nn
 from model_building import LocalFeatures,FusionLayer,PointwiseChannelMixingLayer,GuidanceLayer,SlicingLayer,ApplyCoeffs
+import pytorch_lightning as pl
+
 class ResnetPartial(nn.Module):
     def __init__(self, ):
         super(ResnetPartial, self).__init__()
