@@ -28,10 +28,11 @@ py3=/scratch/awd275/miniconda3/envs/hdrnet/bin/python3
 pyscript=/home/awd275/hdrnet-pytorch/scripts/train.py
 logging_path=/home/awd275/hdrnet-pytorch/jho_logs/
 gpus=1
-mode=2
+dataset_flag=2
+mode=1
 #checkpoint_path=/home/awd275/hdrnet-pytorch/checkpoints/default1.ckpt 
 batch_size=8
-$py3 $pyscript -l $logging_path -g $gpus -m $mode -b $batch_size
+$py3 $pyscript -l $logging_path -g $gpus -d $dataset_flag -m $mode -b $batch_size
 
 
 
