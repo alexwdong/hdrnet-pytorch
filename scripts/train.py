@@ -1,4 +1,5 @@
 from model_building import HDRPointwiseNN
+from pretrained_hdrnet import HDRnetPretrained
 from dataset import HDRDataset
 import os
 from PIL import Image
@@ -17,12 +18,14 @@ parser = argparse.ArgumentParser(description='take input path full of images, ma
 
 parser.add_argument('-l', '--logging_path', help='logging_path',default='./')
 parser.add_argument('-g', '--gpus', help='number of gpus',default = 1)
-parser.add_argument('-m', '--mode', help='1 = hdrnet, 2 = JustinHo',default=1)
+parser.add_argument('-d', '--dataset_flag', help='1 = hdrnet, 2 = JustinHo',default=1)
+parser.add_argument('-m', '--mode',help='1=HDRnetPointwiseNN, 2=pretrained_Resnet')
 parser.add_argument('-c', '--checkpoint_path', help='checkpoint file,if this is present, the model will load the checkpoint before training',required=False)
 parser.add_argument('-b', '--batch_size',help='batch_size, default=16', default=16)
 args = vars(parser.parse_args())
 
 logging_path = args['logging_path']
+dataset_flag = int(args['dataset_flag'])
 mode = int(args['mode'])
 num_gpus = int(args['gpus'])
 checkpoint_path = args['checkpoint_path']
@@ -30,7 +33,7 @@ batch_size=int(args['batch_size'])
 
 if __name__ == '__main__':
 
-    if mode == 1:
+    if dataset_flag== 1:
         orig_photos_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_original'
         editor_A_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_A'
         #editor_B_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_B'
@@ -47,7 +50,7 @@ if __name__ == '__main__':
         
         #dataset = ConcatDataset([dataset_A,dataset_B,dataset_C,dataset_D,dataset_E])
         dataset=dataset_A
-    elif mode == 2:
+    elif dataset_flag == 2:
         orig_photos_path = '/scratch/awd275/StyleTransfer/data/justinho/small_original/'
         edited_photos_path = '/scratch/awd275/StyleTransfer/data/justinho/small_edited'
 
@@ -68,9 +71,10 @@ if __name__ == '__main__':
     print(dataset_length)
     print(train_length)
     print(val_length)
-
-    hdrnet = HDRPointwiseNN()
-
+    if mode==1:
+        hdrnet = HDRPointwiseNN()
+    else:
+        hdrnet=HDRnetPretrained
     if checkpoint_path: 
         hdrnet.load_from_checkpoint(checkpoint_path=checkpoint_path)
 
