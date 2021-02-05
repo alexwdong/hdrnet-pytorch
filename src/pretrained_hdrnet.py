@@ -2,7 +2,7 @@ import torch
 import torchvision
 import inspect
 from torch import nn
-from model_building import LocalFeatures,FusionLayer,PointwiseChannelMixingLayer,GuidanceLayer,SlicingLayer,ApplyCoeffs
+from model_building import ConvBloack, FcBlock, View, LocalFeatures,FusionLayer,PointwiseChannelMixingLayer,GuidanceLayer,SlicingLayer,ApplyCoeffs
 import pytorch_lightning as pl
 
 class ResnetPartial(nn.Module):
