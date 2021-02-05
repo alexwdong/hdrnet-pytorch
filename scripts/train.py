@@ -34,8 +34,8 @@ batch_size=int(args['batch_size'])
 if __name__ == '__main__':
 
     if dataset_flag== 1:
-        orig_photos_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_original'
-        editor_A_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_A'
+        orig_photos_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/processed/fivek_original_reduced'
+        editor_A_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/processed/fivek_editor_A_reduced'
         #editor_B_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_B'
         #editor_C_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_C'
         #editor_D_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_D'

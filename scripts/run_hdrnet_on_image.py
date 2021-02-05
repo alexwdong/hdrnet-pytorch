@@ -52,7 +52,7 @@ if __name__ == '__main__':
     
     input_image_full = full_transforms(input_image).unsqueeze(0)
     pred = hdrnet.forward(input_image_reduced,input_image_full,)
-    pred = torch.clamp(pred, 0, 1)
+    pred = torch.clamp(pred, 0, 1 )
     pred = pred.detach()
     print('pred shape:', pred.shape)
     if out_size is not None:    

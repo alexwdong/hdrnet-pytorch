@@ -48,7 +48,7 @@ class HDRnetPretrained(pl.LightningModule):
     def __init__(self,freeze_pretrained_weights=True):
         super(HDRPointwiseNN, self).__init__()
         self.low_level = make_partial_resnet()
-        if freeze_pretrained_weights=True:
+        if freeze_pretrained_weights==True:
             self.low_level.requires_grad_(False)
         
         self.local_features = LocalFeatures()
