@@ -28,8 +28,8 @@ if __name__ == '__main__':
     
     #Figure out which mode
     if mode ==1:
-        output_path = 'out_image.jpeg'
-        orig_output_path = 'orig_out_image.jpeg'
+        output_path = 'out_image.png'
+        orig_output_path = 'orig_out_image.png'
     else: 
         raise NotImplementedError('mode 2 not implemented yet')
     
