@@ -20,11 +20,21 @@ def make_partial_resnet():
     for ii,layer in enumerate(full_resnet.children()):
         print(ii)
         resnet_modules.append(layer)
-        if ii == 7:# 
+        if ii == 6:# 
             break
     partial_resnet = nn.Sequential(*resnet_modules)
     return partial_resnet
-    
+
+class LocalFeatures(nn.Module):
+    def __init__(self,):
+        super(LocalFeatures, self).__init__()
+        self.conv1 = ConvBlock(inc=1024, outc=256, kernel_size=3, padding=1, stride=1, batch_norm=True)
+        self.conv2 = ConvBlock(inc=256, outc=64, kernel_size=3, padding=1, stride=1, batch_norm=True)
+
+    def forward(self,x):
+        x = self.conv1(x) 
+        x = self.conv2(x) 
+        return x
     
 class GlobalFeatures(nn.Module):
     def __init__(self,):
