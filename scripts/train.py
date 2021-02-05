@@ -74,7 +74,7 @@ if __name__ == '__main__':
     if mode==1:
         hdrnet = HDRPointwiseNN()
     else:
-        hdrnet=HDRnetPretrained
+        hdrnet=HDRnetPretrained()
     if checkpoint_path: 
         hdrnet.load_from_checkpoint(checkpoint_path=checkpoint_path)
 
