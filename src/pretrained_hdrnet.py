@@ -2,6 +2,9 @@ import torch
 import torchvision
 import inspect
 from torch import nn
+import torch.nn.functional as F
+import numpy as 
+
 from model_building import ConvBlock, FcBlock, View, FusionLayer,PointwiseChannelMixingLayer,GuidanceLayer,SlicingLayer,ApplyCoeffs
 import pytorch_lightning as pl
 
