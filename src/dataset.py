@@ -8,15 +8,28 @@ from torch.utils.data import Dataset
 
 
 
-skiplist = [ #fivek skip list
+skip_list = [ #fivek skip list
     'a1233-DSC_0064.jpg',
     'a1234-_DGW6333.jpg',
     #jho skip list
     'JH2_5161.jpg',
     'JH2_5182.jpg'
            ]
+
+def make_skip_list(input_path,target_path):
+    file_names = [ f for f in listdir(input_path) if os.path.isfile(os.path.join(input_path, f))]
+    for f in file_names:
+        try:
+            #Try opening the files, if they work, then we append to the input_files and target_files lists
+            input_image_path = os.path.join(self.input_path, f)
+            output_image_path = os.path.join(self.target_path, f)
+        except Exception: #If they don't work, append to skip_list, and print skip_list
+            skip_list.append(f)
+    print(skip_list)
+    return skip_list
+    
 class HDRDataset(Dataset):
-    def __init__(self, input_path,target_path, full_size=2048,reduced_size=256):
+    def __init__(self, input_path,target_path, full_size=2048,reduced_size=256,make_skip_list=False,skip_list=[]):
         self.input_path = input_path
         self.target_path = target_path
         # Make list of in_files and out_files
@@ -24,21 +37,20 @@ class HDRDataset(Dataset):
         self.input_files=[]
         self.target_files=[]
         
-        skiplist = []
+        if make_skip_list is False:
+            pass
+        else:
+            skip_list = make_skip_list(input_path,target_path)
+            
         for f in self.file_names:
-            try:
-                #Try opening the files, if they work, then we append to the input_files and target_files lists
-                input_image_path = os.path.join(self.input_path, f)
-                output_image_path = os.path.join(self.target_path, f)
-                input_image = Image.open(input_image_path).convert('RGB')
-                output_image = Image.open(output_image_path).convert('RGB')
-                
+            if f in skip_list:
+                pass
+            else:
                 self.input_files.append(os.path.join(self.input_path,f))
                 self.target_files.append(os.path.join(self.target_path,f))
-            except Exception: #If they don't work, append to skiplist, and print skiplist
-                skiplist.append(f)
-        print("skiplist is of length:", str(len(skiplist)))
-        print(skiplist)
+
+        print("skip_list is of length:", str(len(skip_list)))
+        print(skip_list)
         
         self.full_size = full_size
         self.reduced_size = reduced_size

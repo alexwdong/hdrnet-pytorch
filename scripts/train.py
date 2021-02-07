@@ -31,6 +31,9 @@ num_gpus = int(args['gpus'])
 checkpoint_path = args['checkpoint_path']
 batch_size=int(args['batch_size'])
 
+###Define skip_list here
+skip_list=[]
+
 if __name__ == '__main__':
 
     if dataset_flag== 1:
@@ -41,7 +44,7 @@ if __name__ == '__main__':
         #editor_D_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_D'
         #editor_E_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_E'
 
-        dataset_A = HDRDataset(orig_photos_path,editor_A_path)
+        dataset_A = HDRDataset(orig_photos_path,editor_A_path,skip_list=[])
         #dataset_B = HDRDataset(orig_photos_path,editor_B_path)
         #dataset_C = HDRDataset(orig_photos_path,editor_C_path)
         #dataset_D = HDRDataset(orig_photos_path,editor_D_path)
@@ -61,7 +64,7 @@ if __name__ == '__main__':
 
 
     dataset_length = len(dataset)
-    train_length = math.ceil(.8 * dataset_length)
+    train_length = math.ceil(.9 * dataset_length)
     val_length = dataset_length - train_length
     train_set, val_set = random_split(dataset, [train_length, val_length], generator=torch.Generator().manual_seed(42))
 
