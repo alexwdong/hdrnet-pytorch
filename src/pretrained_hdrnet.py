@@ -2,7 +2,7 @@ import torch
 import torchvision
 import inspect
 from torch import nn
-from model_building import ConvBlock, FcBlock, View, LocalFeatures,FusionLayer,PointwiseChannelMixingLayer,GuidanceLayer,SlicingLayer,ApplyCoeffs
+from model_building import ConvBlock, FcBlock, View, FusionLayer,PointwiseChannelMixingLayer,GuidanceLayer,SlicingLayer,ApplyCoeffs
 import pytorch_lightning as pl
 
 class ResnetPartial(nn.Module):
@@ -41,13 +41,13 @@ class GlobalFeatures(nn.Module):
         super(GlobalFeatures, self).__init__()
         self.conv1 = ConvBlock(inc=1024, outc=512, kernel_size=3, padding=1, stride=2, batch_norm=True)
         self.conv2 = ConvBlock(inc=512, outc=256, kernel_size=3, padding=1, stride=2, batch_norm=True)
-        self.view = View((-1,256*5*5))
-        self.fc1 = FcBlock(inc=256*5*5,outc=1024)
+        self.view = View((-1,256*4*4))
+        self.fc1 = FcBlock(inc=256*4*4,outc=1024)
         self.fc2 = FcBlock(inc=1024,outc=256)
         self.fc3 = FcBlock(inc=256,outc=64)
         
     def forward(self,x):
-        x = self.conv1(x) # 15 -> 8 (stride 2 with padding 1)
+        x = self.conv1(x) # 16 -> 8 (stride 2 with padding 1)
         x = self.conv2(x) #8 -> 5 (stride 2 with padding 1)
         x = self.view(x)
         x = self.fc1(x)
