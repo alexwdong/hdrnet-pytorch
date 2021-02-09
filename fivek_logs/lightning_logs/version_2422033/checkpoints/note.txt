@@ -1,0 +1,1 @@
+This version is for the fiveK data set, trained on editor A, with a PRETRAINED restnet backbone.
