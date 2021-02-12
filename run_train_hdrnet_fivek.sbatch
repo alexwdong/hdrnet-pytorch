@@ -21,7 +21,7 @@ conda activate hdrnet
 
 cd /home/awd275/hdrnet-pytorch/
 
-export PYTHONPATH="./"
+export PYTHONPATH="./src"
 
 # Execute the script
 py3=/scratch/awd275/miniconda3/envs/hdrnet/bin/python3
@@ -32,8 +32,7 @@ dataset_flag=1
 mode=1
 #checkpoint_path=/home/awd275/hdrnet-pytorch/checkpoints/default1.chkpt 
 batch_size=8
-$py3 $pyscript -l $logging_path -g $gpus -d $dataset_flag -m $mode -b 
-$batch_size
+$py3 $pyscript -l $logging_path -g $gpus -d $dataset_flag -m $mode -b $batch_size
 
 
 
