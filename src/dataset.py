@@ -25,6 +25,7 @@ def make_skip_list(input_path,target_path):
             output_image_path = os.path.join(self.target_path, f)
         except Exception: #If they don't work, append to skip_list, and print skip_list
             skip_list.append(f)
+    print("Skip List Below:")
     print(skip_list)
     return skip_list
     

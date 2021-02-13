@@ -21,7 +21,7 @@ conda activate hdrnet
 
 cd /home/awd275/hdrnet-pytorch/
 
-export PYTHONPATH=$PYTHONPATH:/home/awd275/hdrnet-pytorch/src
+export PYTHONPATH="./"
 echo pretrained
 # Execute the script
 py3=/scratch/awd275/miniconda3/envs/hdrnet/bin/python3

@@ -18,7 +18,7 @@ conda activate hdrnet
 
 cd /home/awd275/hdrnet-pytorch/
 
-export PYTHONPATH="src/"
+export PYTHONPATH="./"
 
 # Execute the script
 py3=python3

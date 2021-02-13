@@ -1,6 +1,6 @@
-from model_building import HDRPointwiseNN
-from pretrained_hdrnet import HDRnetPretrained
-from dataset import HDRDataset
+from src.model_building import HDRPointwiseNN
+from src.pretrained_hdrnet import HDRnetPretrained
+from src.dataset import HDRDataset
 import os
 from PIL import Image
 import math
@@ -57,7 +57,7 @@ if __name__ == '__main__':
         orig_photos_path = '/scratch/awd275/StyleTransfer/data/justinho/small_original/'
         edited_photos_path = '/scratch/awd275/StyleTransfer/data/justinho/small_edited'
 
-        dataset = HDRDataset(orig_photos_path,edited_photos_path)
+        dataset = HDRDataset(orig_photos_path,edited_photos_path,make_skip_list=True)
 
     else: 
         raise ValueError('mode should be 1 or 2')

@@ -3,9 +3,7 @@ import torchvision
 import inspect
 from torch import nn
 import torch.nn.functional as F
-
-
-from model_building import ConvBlock, FcBlock, View, FusionLayer,PointwiseChannelMixingLayer,GuidanceLayer,SlicingLayer,ApplyCoeffs
+from src.model_building import ConvBlock, FcBlock, View, FusionLayer,PointwiseChannelMixingLayer,GuidanceLayer,SlicingLayer,ApplyCoeffs
 import pytorch_lightning as pl
 
 class ResnetPartial(nn.Module):
@@ -96,31 +94,20 @@ class HDRnetPretrained(pl.LightningModule):
         input_reduced, input_full, target_full = batch
         ### Start HDRnet Model
         
-        print('a',input_reduced.shape)
         low_level_output = self.low_level(input_reduced)
-        print('b',low_level_output.shape)
         local_output = self.local_features(low_level_output)
-        print('c',local_output.shape)
         global_output = self.global_features(low_level_output)
-        print('d',global_output.shape)
         fusion_output = self.fusion_layer(local_output,global_output)
-        print('e',fusion_output.shape)
 
         pwc_mix_output = self.pwc_mixing(fusion_output)
-        print('f',pwc_mix_output.shape)
 
         bilateral_grid_output = self.reshape(pwc_mix_output)
-        print('g',bilateral_grid_output.shape)
 
         guidance_output = self.guidance_layer(input_full)
-        print('h',guidance_output.shape)
 
-        
         slice_coeffs = self.slicing_layer(bilateral_grid_output, guidance_output)
-        print('i',slice_coeffs.shape)
 
         pred = self.apply_coeffs(slice_coeffs, input_full)
-        print('j',pred.shape)
 
         ### End HDRnet Model
         loss = F.mse_loss(pred, target_full)
@@ -134,31 +121,21 @@ class HDRnetPretrained(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         input_reduced, input_full, target_full = batch
         ### Start HDRnet Model
-        print('a',input_reduced.shape)
         low_level_output = self.low_level(input_reduced)
-        print('b',low_level_output.shape)
         local_output = self.local_features(low_level_output)
-        print('c',local_output.shape)
         global_output = self.global_features(low_level_output)
-        print('d',global_output.shape)
         fusion_output = self.fusion_layer(local_output,global_output)
-        print('e',fusion_output.shape)
 
         pwc_mix_output = self.pwc_mixing(fusion_output)
-        print('f',pwc_mix_output.shape)
 
         bilateral_grid_output = self.reshape(pwc_mix_output)
-        print('g',bilateral_grid_output.shape)
 
         guidance_output = self.guidance_layer(input_full)
-        print('h',guidance_output.shape)
 
         
         slice_coeffs = self.slicing_layer(bilateral_grid_output, guidance_output)
-        print('i',slice_coeffs.shape)
 
         pred = self.apply_coeffs(slice_coeffs, input_full)
-        print('j',pred.shape)
         ### End HDRnet Model
         loss = F.mse_loss(pred, target_full)
         self.log('val_loss', loss)
