@@ -44,7 +44,7 @@ if __name__ == '__main__':
         #editor_D_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_D'
         #editor_E_path = '/scratch/awd275/StyleTransfer/data/fivek_dataset/raw/fivek_editor_E'
 
-        dataset_A = HDRDataset(orig_photos_path,editor_A_path,skip_list=[])
+        dataset_A = HDRDataset(orig_photos_path,editor_A_path,create_skip_list=False)
         #dataset_B = HDRDataset(orig_photos_path,editor_B_path)
         #dataset_C = HDRDataset(orig_photos_path,editor_C_path)
         #dataset_D = HDRDataset(orig_photos_path,editor_D_path)
@@ -57,7 +57,7 @@ if __name__ == '__main__':
         orig_photos_path = '/scratch/awd275/StyleTransfer/data/justinho/large_original/'
         edited_photos_path = '/scratch/awd275/StyleTransfer/data/justinho/large_edited'
 
-        dataset = HDRDataset(orig_photos_path,edited_photos_path,make_skip_list=True)
+        dataset = HDRDataset(orig_photos_path,edited_photos_path,create_skip_list=True)
 
     else: 
         raise ValueError('mode should be 1 or 2')

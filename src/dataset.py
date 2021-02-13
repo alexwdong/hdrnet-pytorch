@@ -30,7 +30,7 @@ def make_skip_list(input_path,target_path):
     return skip_list
     
 class HDRDataset(Dataset):
-    def __init__(self, input_path,target_path, full_size=2048,reduced_size=256,make_skip_list=False,skip_list=[]):
+    def __init__(self, input_path,target_path, full_size=2048,reduced_size=256,create_skip_list=False,skip_list=[]):
         self.input_path = input_path
         self.target_path = target_path
         # Make list of in_files and out_files
@@ -38,7 +38,7 @@ class HDRDataset(Dataset):
         self.input_files=[]
         self.target_files=[]
         
-        if make_skip_list is False:
+        if create_skip_list is False:
             pass
         else:
             skip_list = make_skip_list(input_path,target_path)
