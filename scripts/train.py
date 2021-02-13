@@ -14,6 +14,9 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
 
+Image.MAX_IMAGE_PIXELS = None
+
+
 parser = argparse.ArgumentParser(description='take input path full of images, makes the outputpath with images at reduced size')
 
 parser.add_argument('-l', '--logging_path', help='logging_path',default='./')
