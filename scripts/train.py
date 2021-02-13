@@ -54,8 +54,8 @@ if __name__ == '__main__':
         #dataset = ConcatDataset([dataset_A,dataset_B,dataset_C,dataset_D,dataset_E])
         dataset=dataset_A
     elif dataset_flag == 2:
-        orig_photos_path = '/scratch/awd275/StyleTransfer/data/justinho/small_original/'
-        edited_photos_path = '/scratch/awd275/StyleTransfer/data/justinho/small_edited'
+        orig_photos_path = '/scratch/awd275/StyleTransfer/data/justinho/large_original/'
+        edited_photos_path = '/scratch/awd275/StyleTransfer/data/justinho/large_edited'
 
         dataset = HDRDataset(orig_photos_path,edited_photos_path,make_skip_list=True)
 
