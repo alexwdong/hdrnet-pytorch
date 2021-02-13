@@ -21,8 +21,8 @@ def make_skip_list(input_path,target_path):
     for f in file_names:
         try:
             #Try opening the files, if they work, then we append to the input_files and target_files lists
-            input_image_path = os.path.join(self.input_path, f)
-            output_image_path = os.path.join(self.target_path, f)
+            input_image_path = os.path.join(input_path, f)
+            output_image_path = os.path.join(target_path, f)
         except Exception: #If they don't work, append to skip_list, and print skip_list
             skip_list.append(f)
     print("Skip List Below:")
